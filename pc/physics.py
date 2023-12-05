@@ -46,5 +46,12 @@ def line_ball_collision(ball: Ball, p1: np.array, p2: np.array, distance: float)
     #     normal = -1/line_slope
     #     np.cross()
     # return False
+
+def ball_ball_collision(target_ball: Ball, balls:[]):
+    for ball in balls:
+        if not ball is not target_ball and abs(ball.pos - target_ball.pos) < target_ball.radius:
+            return True
+
 def plan_path(cue: Ball, billiard: Ball):
+
     pass
