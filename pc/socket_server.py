@@ -1,7 +1,10 @@
 import socket
 import threading
-# from const import *
-from ..lego.const import *
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lego"))
+
+from const import *
 import time
 
 # bind_ip = "169.254.98.60" # Replace this with your own IP address

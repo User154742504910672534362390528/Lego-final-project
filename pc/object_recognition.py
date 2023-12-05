@@ -1,5 +1,8 @@
 import cv2
-from ..lego.const import *
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lego"))
+from const import *
 
 def calibrate(imgs):
     # termination criteria
