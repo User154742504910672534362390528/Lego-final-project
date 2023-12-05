@@ -1,6 +1,24 @@
-# from pathlib import Path
+from pathlib import Path
+import sys
+# print(sys.path)
+# print(Path(__file__).parent.parent.resolve())
+# print(Path(__file__).parent.resolve())
+# print(Path(__file__).resolve())
+# sys.path.append(Path(__file__).parent.parent.resolve())
+# print(sys.path)
 # print('Running' if __name__ == '__main__' else 'Importing', Path(__file__).resolve())
+# print(123)
+# print(__name__)
+__package__ = Path(__file__).resolve()
+print(__package__, type(__package__))
+# print(__spec__)
+# import lego
+# from 
 from ..lego.const import *
+# __package__.
+# from lego.const import *
+# from lego.const import *
+# from lego import const
 # print(__path__)
 # print(__package__)
 # from lego.const import *

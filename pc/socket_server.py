@@ -1,6 +1,7 @@
 import socket
 import threading
-from const import *
+# from const import *
+from ..lego.const import *
 import time
 
 # bind_ip = "169.254.98.60" # Replace this with your own IP address

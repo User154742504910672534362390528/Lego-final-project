@@ -1,3 +1,11 @@
+# from pathlib import Path
+# import sys
+# __package__ = Path(__file__).parent.resolve()
+# print(__package__)
+# print(__spec__)
+# from __future__ import absolute_import
+# from lego
+
 host_ip = "169.254.98.60"
 client_ip = "169.254.62.193"
 PORT = 8964
