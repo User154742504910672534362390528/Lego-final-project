@@ -10,3 +10,6 @@ Beep: beep
 Turn motor: turn [port (A)] [speed] [angle]
 Go: go [speed] [turn_rate]
 '''
+
+# ball related
+RADIUS = 15 # mm
