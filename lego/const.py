@@ -31,12 +31,24 @@ CORNER_POCKET_POS = [
     [np.array([557.4, 268.07]), np.array([557.4-28.929, 268.07]), np.array([557.4-7.6772, 268.07-29.1666])],
 ]
 
+# corner - radius
+CORNER_AIM_POS = np.array(
+    [
+        np.array([7.6772+RADIUS, 0+RADIUS]),
+        np.array([7.6772+RADIUS, 268.07-RADIUS]),
+        np.array([557.4-RADIUS, 0+RADIUS]),
+        np.array([557.4-RADIUS, 268.07-RADIUS])
+    ]
+)
+
 # center, 2 outer corners, 2 inner corners
 '''
 ____     ____
    1\   /2
  3__/|_|\___4
       0
+
+radius = 39
 '''
 MID_POCKET_POS = [
     [
@@ -54,6 +66,12 @@ MID_POCKET_POS = [
         np.array([278.7+17.6111, 268.07+16.85]),
     ]
 ]
+
+MID_AIM_POS = np.array(
+    [
+        
+    ]
+)
 
 # TODO
 CORNER_POCKET_ANGLES = [

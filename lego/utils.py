@@ -5,12 +5,14 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
-
+import time
 
 ev3 = EV3Brick()
 drive_base = DriveBase(Motor(Port.B), Motor(Port.A), 55.5, 104)
+
 def beep():
     ev3.speaker.beep()
+
 def turn(port=Port.A, speed=1000, angle=3600):
     test_motor = Motor(port)
     test_motor.run_target(speed, angle)
@@ -25,7 +27,13 @@ def get_port(port_str):
     if port_str  == "D":
         return Port.D
 
-def parse_command(msg):
+def fire(port=Port.A, speed=1000, angle=-150):
+    fire_motor = Motor(port)
+    fire_motor.run_target(speed, angle)
+    time.sleep(2)
+    fire_motor.run_target(speed/2, -angle)
+
+def parse_command(msg: str):
     if "turn" in msg:
         msg = msg.split()
         port = get_port(msg[1])
@@ -35,6 +43,10 @@ def parse_command(msg):
         turn(port, speed, angle)
     elif "beep" in msg:
         beep()
+    elif "fire" in msg:
+        msg = msg.split()
+        port = get_port(msg[1])
+        fire(port)
     elif "go" in msg:
         msg = msg.split()
         speed = int(msg[1])
