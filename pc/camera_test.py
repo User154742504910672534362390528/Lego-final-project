@@ -19,6 +19,10 @@ pipeline_profile = config.resolve(pipeline_wrapper)
 device = pipeline_profile.get_device()
 device_product_line = str(device.get_info(rs.camera_info.product_line))
 
+depth_sensor = device.first_depth_sensor()
+depth_scale = depth_sensor.get_depth_scale()
+print("depth scale", depth_scale)
+
 found_rgb = False
 for s in device.sensors:
     if s.get_info(rs.camera_info.name) == 'RGB Camera':
