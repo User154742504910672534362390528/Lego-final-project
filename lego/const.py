@@ -69,7 +69,7 @@ MID_POCKET_POS = [
 
 MID_AIM_POS = np.array(
     [
-        
+        np.array([278.7, -21.85+])
     ]
 )
 

@@ -27,7 +27,7 @@ def calibrate(imgs):
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
     return mtx
 
-def get_balls_pos():
+def get_balls_pos(img):
     pass
 
 def get_car_pos():
