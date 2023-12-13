@@ -7,22 +7,22 @@ from robot_inc import *
 # Create your objects here.
 ev3 = EV3Brick()
 # Initialize the motors.
-left_motor = Motor(Port.C)
-right_motor = Motor(Port.B)
+left_motor = Motor(Port.B,positive_direction=Direction.COUNTERCLOCKWISE)
+right_motor = Motor(Port.C,positive_direction=Direction.COUNTERCLOCKWISE)
 
 # Initialize the drive base.
-robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=180)
+robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=182)
 
-# Go forward and backwards for one meter.
-# forward(400)
+# Go robot.straight and backwards for one meter.
+# robot.straight(400)
 # ev3.speaker.beep()
 
 # robot.turn(3600)
 # ev3.speaker.beep()
 
 
-RECT_X=650
-RECT_Y=500
+RECT_X=550
+RECT_Y=450
 
 # def map_to_rectangle(x,y):
 #     if x<-RECT_X:
@@ -104,7 +104,7 @@ def reg_angle(start,end):
 def path_planning(curx,cury,cur_angle,destx,desty,dest_angle):
     ev3.speaker.beep()
     start_rect,start_dist,start_edge=map_to_rectangle(curx,cury,cur_angle)
-    forward(-start_dist)
+    robot.straight(start_dist)
     end_rect,end_dist,end_edge=map_to_rectangle(destx,desty,dest_angle)
     # start X end >0 = counter clockwise
     cross=(start_rect[0]*end_rect[1]-start_rect[1]*end_rect[0])
@@ -118,66 +118,56 @@ def path_planning(curx,cury,cur_angle,destx,desty,dest_angle):
         robot.turn(reg_angle(cur_angle,90*start_edge))
         while cur_edge != end_edge:
             if cur_edge==0:
-                forward(RECT_X-cur_pos[0])
+                robot.straight(RECT_X-cur_pos[0])
                 cur_pos=(RECT_X,-RECT_Y)
             elif cur_edge==1:
-                forward(RECT_Y-cur_pos[1])
+                robot.straight(RECT_Y-cur_pos[1])
                 cur_pos=(RECT_X,RECT_Y)
             elif cur_edge==2:
-                forward(RECT_X+cur_pos[0])
+                robot.straight(RECT_X+cur_pos[0])
                 cur_pos=(-RECT_X,RECT_Y)
             elif cur_edge==3:
-                forward(RECT_Y+cur_pos[1])
+                robot.straight(RECT_Y+cur_pos[1])
                 cur_pos=(-RECT_X,-RECT_Y)
             cur_edge=(cur_edge+1)%4
             robot.turn(90)
         if end_edge==0:
-            forward(end_rect[0]-cur_pos[0])
+            robot.straight(end_rect[0]-cur_pos[0])
         elif end_edge==1:
-            forward(end_rect[1]-cur_pos[1])
+            robot.straight(end_rect[1]-cur_pos[1])
         elif end_edge==2:
-            forward(end_rect[0]+cur_pos[0])
+            robot.straight(cur_pos[0]-end_rect[0])
         elif end_edge==3:
-            forward(end_rect[1]+cur_pos[1])
+            robot.straight(cur_pos[1]-end_rect[1])
         robot.turn(reg_angle(90*end_edge,dest_angle))
     else:
-        robot.turn(reg_angle(cur_angle,90*(dest_angle+2)))
+        robot.turn(reg_angle(cur_angle,90*(start_edge+2)))
         while cur_edge != end_edge:
             if cur_edge==0:
-                forward(RECT_X+cur_pos[0])
+                robot.straight(RECT_X+cur_pos[0])
                 cur_pos=(-RECT_X,-RECT_Y)
             elif cur_edge==1:
-                forward(RECT_Y+cur_pos[1])
+                robot.straight(RECT_Y+cur_pos[1])
                 cur_pos=(RECT_X,-RECT_Y)
             elif cur_edge==2:
-                forward(RECT_X-cur_pos[0])
+                robot.straight(RECT_X-cur_pos[0])
                 cur_pos=(RECT_X,RECT_Y)
             elif cur_edge==3:
-                forward(RECT_Y-cur_pos[1])
+                robot.straight(RECT_Y-cur_pos[1])
                 cur_pos=(-RECT_X,RECT_Y)
             cur_edge=(cur_edge+3)%4
             robot.turn(-90)
         if end_edge==0:
-            forward(end_rect[0]-cur_pos[0])
+            robot.straight(cur_pos[0]-end_rect[0])
         elif end_edge==1:
-            forward(end_rect[1]-cur_pos[1])
+            robot.straight(cur_pos[1]-end_rect[1])
         elif end_edge==2:
-            forward(end_rect[0]+cur_pos[0])
+            robot.straight(end_rect[0]-cur_pos[0])
         elif end_edge==3:
-            forward(end_rect[1]+cur_pos[1])
-        robot.turn(reg_angle(90*end_edge,dest_angle))
-
+            robot.straight(end_rect[1]-cur_pos[1])
+        robot.turn(reg_angle(90*(end_edge+2),dest_angle))
+    robot.straight(-end_dist)
     ev3.speaker.beep()
 
-def argmin(list):
-    min_val=list[0]
-    arg_min=0
-    for i in range(len(list)):
-        if list[i]<min_val:
-            arg_min=i
-            min_val=list[i]
-    return arg_min
-
-def forward(dist):
-    forward(-dist)
-print(map_to_rectangle(400,100,45))
+path_planning(RECT_X,RECT_Y,225,-370,-370,45)
+path_planning(-370,-370,45,RECT_X,RECT_Y,225)
