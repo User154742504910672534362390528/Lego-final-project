@@ -10,8 +10,14 @@ ev3 = EV3Brick()
 left_motor = Motor(Port.B,positive_direction=Direction.COUNTERCLOCKWISE)
 right_motor = Motor(Port.C,positive_direction=Direction.COUNTERCLOCKWISE)
 
+## Fine tuned parameters (RECT_X, RECT_Y, WHEEL_DIAMETER, AXLE_TRACK)
+RECT_X=550
+RECT_Y=450
+WHEEL_DIAMETER = 55.5
+AXLE_TRACK = 182
+
 # Initialize the drive base.
-robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=182)
+robot = DriveBase(left_motor, right_motor, wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
 
 # Go robot.straight and backwards for one meter.
 # robot.straight(400)
@@ -20,9 +26,6 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=182)
 # robot.turn(3600)
 # ev3.speaker.beep()
 
-
-RECT_X=550
-RECT_Y=450
 
 # def map_to_rectangle(x,y):
 #     if x<-RECT_X:
