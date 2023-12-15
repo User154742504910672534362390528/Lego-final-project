@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from numpy.linalg import inv
 
 try:
     print(1)
@@ -22,12 +23,65 @@ AREA_THRESH_MIN = 60
 AREA_THRESH_MAX = 500
 CIRCLE_RADIUS = 10
 OPEN_RADIUS = 9
+IMG_NUM = 10
+imgs=[]
+
+
+small_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (OPEN_RADIUS, OPEN_RADIUS))
+small_kernel = small_kernel | small_kernel.T
+kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (CIRCLE_RADIUS, CIRCLE_RADIUS))
+# kernel = 1-kernel
+kernel = kernel|kernel.T
+# kernel = np.array(
+#     [
+#         [0, 1, 1, 1, 0],
+#         [1, 1, 1, 1, 1],
+#         [1, 1, 1, 1, 1],
+#         [1, 1, 1, 1, 1],
+#         [0, 1, 1, 1, 0],
+#     ], dtype=np.uint8
+# )
+
+
+def calibrate():
+    for i in range(IMG_NUM):
+        ret, frame = cap.read()
+        cv2.imshow("test", frame)
+        imgs.append(frame)
+    print("start calibrate:")
+    # termination criteria
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+    # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
+    objp = np.zeros((8*6,3), np.float32)
+    objp[:,:2] = np.mgrid[0:8,0:6].T.reshape(-1,2)
+    # Arrays to store object points and image points from all the images.
+    objpoints = [] # 3d point in real world space
+    imgpoints = [] # 2d points in image plane.
+    images=imgs
+    img_size=(0,0)
+    for img in images:
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img_size=gray.shape[::-1]
+        print(img_size)
+        # Find the chess board corners
+        ret, corners = cv2.findChessboardCorners(gray, (8, 6), None)
+        # If found, add object points, image points (after refining them)
+        if ret == True:
+            print("True")
+            objpoints.append(objp)
+            corners2 = cv2.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
+            imgpoints.append(corners2)
+    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, img_size, None, None)
+    return mtx
+    
+CAMERA_MTX= calibrate() #get this from calibrate camera
+camera_mtx_inv=inv(CAMERA_MTX) # invesing the matrix is required (see the definition of camera matrix)
 
 while 1:
     ret, frame = cap.read()
     width, height = frame.shape[:2]
     # 480, 640
-    print(width, height)
+    # print(width, height)
     # hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     hsv = cv2.cvtColor(cv2.GaussianBlur(frame, (9, 9), 0), cv2.COLOR_BGR2HSV)
     # print(hsv[frame.shape[0]//2, frame.shape[1]//2])
@@ -37,19 +91,54 @@ while 1:
     filter_hsv = cv2.inRange(hsv, low, high)
     cv2.imshow("hsv", filter_hsv)
     neg = cv2.bitwise_not(filter_hsv)
+
     cv2.imshow("neg", neg)
-    circles = cv2.HoughCircles(neg, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=15, minRadius=15, maxRadius=25)
-    if circles is not None:
-        circles = np.uint16(np.around(circles))
-        print(circles)
-        for c in circles[0, :]:
-            cv2.circle(frame, (c[0], c[1]), c[2], (255, 255, 255), 1)
+
+    closed_hsv = cv2.dilate(neg, kernel)
+    closed_hsv = cv2.erode(closed_hsv, kernel)
     
+    cv2.imshow("morph", closed_hsv)
+    closed_hsv = cv2.bitwise_not(closed_hsv)
+    # closed_hsv = cv2.(closed_hsv, kernel)
+    contours, hie = cv2.findContours(closed_hsv, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    # print(len(contours))
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        if area < AREA_THRESH_MIN or area > AREA_THRESH_MAX:
+            continue
+        M = cv2.moments(cnt)
+        cx = int(M["m10"]/M["m00"])
+        cy = int(M["m01"]/M["m00"])
+        cv2.circle(frame, (cx, cy), CIRCLE_RADIUS, (0, 255, 0), 1)
+
+    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # blur = cv2.GaussianBlur(gray, (5, 5), 0)
+
+    # # canny = cv2.Canny(blur, 50, 100)
+    # ret, canny = cv2.threshold(blur, thresh, 255, cv2.THRESH_BINARY)
+    # cv2.imshow('canny', canny)
+    # contours, hie = cv2.findContours(canny, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    # # print(len(contours))
+    # for cnt in contours:
+    #     area = cv2.contourArea(cnt)
+    #     # print(area, end=" ")
+    #     if area < 100:
+    #         continue
+    #     M = cv2.moments(cnt)
+
+    #     # cx = int(M["m10"]/M["m00"])
+    #     # cy = int(M["m01"]/M["m00"])
+    #     # rect = cv2.minAreaRect(cnt)
+    #     # box = cv2.boxPoints(rect)
+    #     # box = np.int0(box)
+    #     # rect = cv2.boundingRect(cnt)
+    #     # cv2.rectangle(frame, *rect)
+    #     cv2.drawContours(frame, cnt, -1, (255, 0, 0), 3)
+    # print()
     cv2.circle(frame, (frame.shape[1]//2, frame.shape[0]//2), 10, (0, 0, 255), 1)
     cv2.imshow("frame", frame)
     key = cv2.waitKey(1)
     if key == ord("q"):
-        input("break")
         break
     elif key == ord('6'):
         thresh += 1
