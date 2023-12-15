@@ -1,6 +1,10 @@
 import numpy as np
 import cv2
 
+from numpy.linalg import inv
+
+# IMG_NUM = 10
+
 def calibrate(imgs):
     print("start calibrate:")
     # termination criteria
@@ -11,13 +15,14 @@ def calibrate(imgs):
     # Arrays to store object points and image points from all the images.
     objpoints = [] # 3d point in real world space
     imgpoints = [] # 2d points in image plane.
+    images=imgs
     img_size=(0,0)
-    for img in imgs:
+    for img in images:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img_size=gray.shape[::-1]
         print(img_size)
         # Find the chess board corners
-        ret, corners = cv2.findChessboardCorners(gray, (8,6), None)
+        ret, corners = cv2.findChessboardCorners(gray, (8, 6), None)
         # If found, add object points, image points (after refining them)
         if ret == True:
             print("True")
@@ -26,6 +31,10 @@ def calibrate(imgs):
             imgpoints.append(corners2)
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, img_size, None, None)
     return mtx
+    
+CAMERA_MTX= calibrate() #get this from calibrate camera
+camera_mtx_inv=inv(CAMERA_MTX) # invesing the matrix is required (see the definition of camera matrix)
+
 
 def main():
     try:
