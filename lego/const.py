@@ -67,12 +67,6 @@ MID_POCKET_POS = [
     ]
 ]
 
-MID_AIM_POS = np.array(
-    [
-        np.array([278.7, -21.85+])
-    ]
-)
-
 # TODO
 CORNER_POCKET_ANGLES = [
     45, 45
@@ -85,3 +79,12 @@ MID_POCKET_ANGLE = [
 # mid open: 64.38, 35.2221
 #           32.19, 17.6111
 # corner to corner 27
+
+TABLE = [
+    # TODO
+    # p0 * x + p1 * y = p2
+    [0, 0, 1],
+    [0, 1, 1],
+    [1, 1, 1],
+    [1, 0, 1]
+]

@@ -15,9 +15,8 @@ def calibrate(imgs):
     # Arrays to store object points and image points from all the images.
     objpoints = [] # 3d point in real world space
     imgpoints = [] # 2d points in image plane.
-    images=imgs
     img_size=(0,0)
-    for img in images:
+    for img in imgs:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img_size=gray.shape[::-1]
         print(img_size)
@@ -29,11 +28,16 @@ def calibrate(imgs):
             objpoints.append(objp)
             corners2 = cv2.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
             imgpoints.append(corners2)
+
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, img_size, None, None)
     return mtx
     
-CAMERA_MTX= calibrate() #get this from calibrate camera
-camera_mtx_inv=inv(CAMERA_MTX) # invesing the matrix is required (see the definition of camera matrix)
+
+# [[650.59819165   0.         317.94835167]
+#  [  0.         653.61004762 242.65273137]
+#  [  0.           0.           1.        ]]
+# CAMERA_MTX= calibrate() #get this from calibrate camera
+# camera_mtx_inv=inv(CAMERA_MTX) # invesing the matrix is required (see the definition of camera matrix)
 
 
 def main():
@@ -60,7 +64,8 @@ def main():
             break
         elif key == ord("c"):
             images.append(frame)
-            calibrate(images)
+            if len(images) >= 5:
+                print(calibrate(images))
 
 if __name__ == "__main__":
     main()
