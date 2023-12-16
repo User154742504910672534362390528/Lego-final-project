@@ -1,6 +1,5 @@
 #!/usr/bin/env pybricks-micropython
 from robot_inc import *
-import math
 import time
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
@@ -15,7 +14,7 @@ motor_0.reset_angle(450)
 motor_1.reset_angle(0)
 
 z = 40 #input
-theta = 60 * math.pi/180 #input
+theta = 60 * pi/180 #input
 
 h = 27.75
 d1 = 195
@@ -29,16 +28,16 @@ v0_y = 137.399
 v1_x = 128.041
 v1_y = 129.944
 
-theta_1 = math.asin((z - d6 * math.cos(theta) + d5 * math.sin(theta) - h - v1_y)/d1)
-theta_2_a = math.atan2((d1 * math.sin(theta_1) + d4 * math.sin(theta) - v0_y + v1_y), (d1 * math.cos(theta_1) - d4 * math.cos(theta) - v0_x + v1_x))
-l = math.sqrt((d1 * math.sin(theta_1) + d4 * math.sin(theta) - v0_y + v1_y)**2 + (d1 * math.cos(theta_1) - d4 * math.cos(theta) - v0_x + v1_x)**2)
-theta_2_b = math.acos((d2**2 + l**2 - d3**2) / (2 * d2 * l))
+theta_1 = asin((z - d6 * cos(theta) + d5 * sin(theta) - h - v1_y)/d1)
+theta_2_a = atan2((d1 * sin(theta_1) + d4 * sin(theta) - v0_y + v1_y), (d1 * cos(theta_1) - d4 * cos(theta) - v0_x + v1_x))
+l = sqrt((d1 * sin(theta_1) + d4 * sin(theta) - v0_y + v1_y)**2 + (d1 * cos(theta_1) - d4 * cos(theta) - v0_x + v1_x)**2)
+theta_2_b = acos((d2**2 + l**2 - d3**2) / (2 * d2 * l))
 theta_2 = theta_2_a + theta_2_b
-d = d6 * math.sin(theta) + (d4 + d5) * math.cos(theta) + l * math.cos(theta_2_a) + v0_x
+d = d6 * sin(theta) + (d4 + d5) * cos(theta) + l * cos(theta_2_a) + v0_x
 print("d = ", d)
 
-angle_1 = theta_1 * 180 / math.pi
-angle_2 = theta_2 * 180 / math.pi
+angle_1 = theta_1 * 180 / pi
+angle_2 = theta_2 * 180 / pi
 print("Target angle of Motor 0:", angle_2)
 print("Target angle of Motor 1:", angle_1)
 

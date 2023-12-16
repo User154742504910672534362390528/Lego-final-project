@@ -1,0 +1,18 @@
+h = 27.75
+d1 = 195
+d2 = 44.1814
+d3 = 264
+d4 = 32
+d5 = 132 #改
+d6 = 24
+v0_x = 62.494
+v0_y = 137.399
+v1_x = 128.041
+v1_y = 129.944
+Z=14
+LIFTED_Z=40
+## Fine tuned parameters (RECT_X, RECT_Y, WHEEL_DIAMETER, AXLE_TRACK)
+RECT_X=550
+RECT_Y=450
+WHEEL_DIAMETER = 55.5
+AXLE_TRACK = 182
