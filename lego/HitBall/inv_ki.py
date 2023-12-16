@@ -12,6 +12,8 @@ motor_0 = Motor(Port.D)
 motor_1 = Motor(Port.A,positive_direction=Direction.COUNTERCLOCKWISE)
 motor_0.reset_angle(450)
 motor_1.reset_angle(0)
+arm = DriveBase(motor_0,motor_1,wheel_diameter=1,axle_track=1)
+cur_angle=(450,0)
 
 z = 40 #input
 theta = 60 * pi/180 #input
@@ -41,9 +43,13 @@ angle_2 = theta_2 * 180 / pi
 print("Target angle of Motor 0:", angle_2)
 print("Target angle of Motor 1:", angle_1)
 
-motor_0.run_target(100, angle_2 * 5)
-motor_1.run_target(100, angle_1 * 5)
-time.sleep(3)
+# motor_0.run_target(100, angle_2 * 5)
+# motor_1.run_target(100, angle_1 * 5)
+
+m0=angle_2 * 5
+m1=angle_1 * 5
+arm.curve(m0/(m1-m0),(m1-m0)*180/pi)
+time.sleep(6)
 motor_1.run_target(100, 0)
 motor_0.run_target(100, 450)
 

@@ -9,8 +9,8 @@ v0_x = 62.494
 v0_y = 137.399
 v1_x = 128.041
 v1_y = 129.944
-Z=14
-LIFTED_Z=40
+Z=40
+LIFTED_Z=66
 ## Fine tuned parameters (RECT_X, RECT_Y, WHEEL_DIAMETER, AXLE_TRACK)
 RECT_X=550
 RECT_Y=450

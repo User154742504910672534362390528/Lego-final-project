@@ -17,7 +17,7 @@ motor_1.reset_angle(0)
 
 # Initialize the drive base.
 robot = DriveBase(left_motor, right_motor, wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
-
+arm = DriveBase(motor_0,motor_1,wheel_diameter=1,axle_track=1)
 
 def HitBall(x,y,longtitude,latitude):
     t1,t2,d=decide_t1_t2(latitude)
@@ -33,6 +33,9 @@ def decide_t1_t2(theta_deg):
     theta_1_deg=theta_1*180/pi
     theta_2_deg=(theta_2_a+theta_2_b)*180/pi
     return theta_1_deg,theta_2_deg,d
+
+def move_t1_t2(t1,t2):
+    pass
 
 def path_planning(curx,cury,cur_angle,destx,desty,dest_angle):
     ev3.speaker.beep()
