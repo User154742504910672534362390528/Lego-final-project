@@ -17,7 +17,6 @@ motor_1.reset_angle(0)
 
 # Initialize the drive base.
 robot = DriveBase(left_motor, right_motor, wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
-arm = DriveBase(motor_0,motor_1,wheel_diameter=1,axle_track=1)
 
 # Current Position
 cur_pos=(RECT_X,RECT_Y,180)
@@ -26,8 +25,9 @@ def HitBall(x,y,longtitude,latitude):
     global cur_pos
     t1,t2,d=decide_t1_t2(Z,latitude)
     end_point=(x+8*sin(longtitude)-d*cos(longtitude),y-8*cos(longtitude)-d*sin(longtitude),longtitude)
-    t1_h,t2_h,_=decide_t1_t2(Z+26,latitude-6)
+    t1_h,t2_h,_=decide_t1_t2(Z+26,latitude+30)
     move_t1_t2(t1_h,t2_h)
+    print((cur_pos[0],cur_pos[1],cur_pos[2],end_point[0],end_point[1],end_point[2]))
     path_planning(cur_pos[0],cur_pos[1],cur_pos[2],end_point[0],end_point[1],end_point[2])
     cur_pos=end_point
     move_t1_t2(t1,t2)
@@ -159,24 +159,18 @@ def reg_angle(start,end):
     else:
         return rotate_opposite
 
-def robot_straight():
-    pass
+# def calibrate_pos():
+#     global cur_pos
+#     new_pos=(0,0)
+#     direct_move(new_pos)
+#     cur_pos=new_pos
 
-def robot_turn():
-    pass
+# def direct_move(end):
+#     global cur_pos
+#     vec=(end[0]-cur_pos[0],end[1]-cur_pos[1])
+#     theta=atan2(end[1]-cur_pos[1],end[0]-cur_pos[0])
+#     robot.turn(reg_angle(cur_pos[2],theta))
+#     robot.straight(sqrt(vec[0]**2+vec[1]**2))
+#     robot.turn(reg_angle(theta,end[2]))
 
-def calibrate_pos():
-    global cur_pos
-    new_pos=(0,0)
-    direct_move(new_pos)
-    cur_pos=new_pos
-
-def direct_move(end):
-    global cur_pos
-    vec=(end[0]-cur_pos[0],end[1]-cur_pos[1])
-    theta=atan2(end[1]-cur_pos[1],end[0]-cur_pos[0])
-    robot.turn(reg_angle(cur_pos[2],theta))
-    robot.straight(sqrt(vec[0]**2+vec[1]**2))
-    robot.turn(reg_angle(theta,end[2]))
-
-HitBall(100,50,225,30)
+HitBall(100,50,225,60)
