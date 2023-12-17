@@ -21,13 +21,15 @@ robot = DriveBase(left_motor, right_motor, wheel_diameter=WHEEL_DIAMETER, axle_t
 # Current Position
 cur_pos=(RECT_X,RECT_Y,180)
 
-def HitBall(x,y,longtitude,latitude):
+def HitBall(x,y,longtitude_deg,latitude_deg):
     global cur_pos
+    latitude=latitude_deg*pi/180
+    longtitude=longtitude_deg*pi/180
     t1,t2,d=decide_t1_t2(Z,latitude)
-    end_point=(x+8*sin(longtitude)-d*cos(longtitude),y-8*cos(longtitude)-d*sin(longtitude),longtitude)
+    end_point=(x+8*sin(longtitude)-d*cos(longtitude),y-8*cos(longtitude)-d*sin(longtitude),longtitude_deg)
     t1_h,t2_h,_=decide_t1_t2(Z+26,latitude+30)
     move_t1_t2(t1_h,t2_h)
-    print((cur_pos[0],cur_pos[1],cur_pos[2],end_point[0],end_point[1],end_point[2]))
+    # print(cur_pos,end_point)
     path_planning(cur_pos[0],cur_pos[1],cur_pos[2],end_point[0],end_point[1],end_point[2])
     cur_pos=end_point
     move_t1_t2(t1,t2)
