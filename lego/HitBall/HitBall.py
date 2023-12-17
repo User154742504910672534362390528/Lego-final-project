@@ -175,4 +175,4 @@ def reg_angle(start,end):
 #     robot.straight(sqrt(vec[0]**2+vec[1]**2))
 #     robot.turn(reg_angle(theta,end[2]))
 
-HitBall(100,50,225,60)
+HitBall(90,40,225,60)
