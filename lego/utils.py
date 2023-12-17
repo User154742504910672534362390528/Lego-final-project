@@ -6,9 +6,13 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 import time
+# import os, sys
+# sys.path.append("../" )
+import HitBall
+from HitBall import parameters
 
 ev3 = EV3Brick()
-drive_base = DriveBase(Motor(Port.B), Motor(Port.A), 55.5, 104)
+drive_base = DriveBase(Motor(Port.B), Motor(Port.A), parameters.WHEEL_DIAMETER, parameters.AXLE_TRACK)
 
 def beep():
     ev3.speaker.beep()
@@ -52,3 +56,19 @@ def parse_command(msg: str):
         speed = int(msg[1])
         turn_rate = int(msg[2])
         drive_base.drive(speed, turn_rate)
+    elif "hit" in msg:
+        msg = msg.split()
+        x = int(msg[1])
+        y = int(msg[2])
+        longtitude = int(msg[3])
+        latitude = int(msg[4])
+        HitBall.HitBall(x, y, longtitude, latitude)
+    elif "path" in msg:
+        msg = msg.split()
+        curx =int(msg[1])
+        cury =int(msg[2])
+        cur_angle =int(msg[3])
+        destx =int(msg[4])
+        desty =int(msg[5])
+        dest_angle =int(msg[6])
+        HitBall.path_planning(curx,cury,cur_angle,destx,desty,dest_angle)
