@@ -56,15 +56,32 @@ class Ball:
         x = [self.pos[0], hole[0]]
         y = [self.pos[1], hole[1]]
         coefficient = np.polyfit(x, y, 1)
-        table_line = TABLE[hole_index]
-        print(coefficient)
-        print([[table_line[0], coefficient[0]], [table_line[1], -1]])
+        table_line_index = (hole_index + 2)%4
+        table_line = TABLE[table_line_index]
+        print("cof", coefficient)
+        print("var", [[table_line[0], coefficient[0]], [table_line[1], -1]])
         # y = c[0] * x + c[1]
         # c0 * x + -1 * y = -c1 # hole-ball line
         cof = np.array([[table_line[0], coefficient[0]], [table_line[1], -1]])
         consts = np.array([table_line[2], coefficient[1]])
         solution = solve(cof, consts)
-        # x = s0, y = s1
+        solx, soly = solution
+        print("sol", solution)
+        if solx > 135 or solx < -135 or soly > 65 or soly < -65:
+            print("wrong line")
+            table_line_index += 1
+            table_line_index %=4
+            table_line = TABLE[table_line_index]
+            print("cof", coefficient)
+            print("var", [[table_line[0], coefficient[0]], [table_line[1], -1]])
+            # y = c[0] * x + c[1]
+            # c0 * x + -1 * y = -c1 # hole-ball line
+            cof = np.array([[table_line[0], coefficient[0]], [table_line[1], -1]])
+            consts = np.array([table_line[2], coefficient[1]])
+            solution = solve(cof, consts)
+            solx, soly = solution
+            print("sol", solution)
+
         return solution
 
 def ball_ball_collision(target_ball: Ball, balls:list[Ball]) -> bool:
@@ -79,13 +96,12 @@ def in_pillars(pos: np.array)->bool:
     '''
     x = pos[0]
     y = pos[1]
-    # TODO: modify x constants
-    if x > 0 and x < 1:
+    if x > -35 and x < 35:
         return True
     return False
 
 def distance(p1:np.array, p2:np.array)->float:
-    print(p1, p2)
+    # print(p1, p2)
     return np.linalg.norm(p1-p2)
 
 # TODO
