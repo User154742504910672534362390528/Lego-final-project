@@ -29,6 +29,7 @@ def HitBall(x,y,longtitude,latitude):
     move_t1_t2(t1_h,t2_h)
     path_planning(cur_pos[0],cur_pos[1],cur_pos[2],end_point[0],end_point[1],end_point[2])
     cur_pos=end_point
+    move_t1_t2(t1,t2)
 
 def decide_t1_t2(z,theta_deg):
     theta=theta_deg*pi/180
