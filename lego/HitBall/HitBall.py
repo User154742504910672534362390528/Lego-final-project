@@ -19,13 +19,20 @@ motor_1.reset_angle(0)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=WHEEL_DIAMETER, axle_track=AXLE_TRACK)
 arm = DriveBase(motor_0,motor_1,wheel_diameter=1,axle_track=1)
 
-def HitBall(x,y,longtitude,latitude):
-    t1,t2,d=decide_t1_t2(latitude)
-    end_point=(x+8*sin(longtitude)-d*cos(longtitude),y-8*cos(longtitude)-d*sin(longtitude))
+# Current Position
+cur_pos=(RECT_X,RECT_Y,180)
 
-def decide_t1_t2(theta_deg):
+def HitBall(x,y,longtitude,latitude):
+    t1,t2,d=decide_t1_t2(Z,latitude)
+    end_point=(x+8*sin(longtitude)-d*cos(longtitude),y-8*cos(longtitude)-d*sin(longtitude),longtitude)
+    t1_h,t2_h,_=decide_t1_t2(Z+26,latitude-6)
+    move_t1_t2(t1_h,t2_h)
+    path_planning(cur_pos[0],cur_pos[1],cur_pos[2],end_point[0],end_point[1],end_point[2])
+    cur_pos=end_point
+
+def decide_t1_t2(z,theta_deg):
     theta=theta_deg*pi/180
-    theta_1 = asin((Z - d6 * cos(theta) + d5 * sin(theta) - h - v1_y)/d1)
+    theta_1 = asin((z - d6 * cos(theta) + d5 * sin(theta) - h - v1_y)/d1)
     theta_2_a = atan2((d1 * sin(theta_1) + d4 * sin(theta) - v0_y + v1_y), (d1 * cos(theta_1) - d4 * cos(theta) - v0_x + v1_x))
     l_square = (d1 * sin(theta_1) + d4 * sin(theta) - v0_y + v1_y)**2 + (d1 * cos(theta_1) - d4 * cos(theta) - v0_x + v1_x)**2
     theta_2_b = acos((d2**2 + l_square - d3**2) / (2 * d2 * sqrt(l_square)))
@@ -35,7 +42,8 @@ def decide_t1_t2(theta_deg):
     return theta_1_deg,theta_2_deg,d
 
 def move_t1_t2(t1,t2):
-    pass
+    motor_0.run_target(100, t2 * 5)
+    motor_1.run_target(100, t1 * 5)
 
 def path_planning(curx,cury,cur_angle,destx,desty,dest_angle):
     ev3.speaker.beep()

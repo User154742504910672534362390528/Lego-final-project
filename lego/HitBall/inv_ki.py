@@ -43,12 +43,11 @@ angle_2 = theta_2 * 180 / pi
 print("Target angle of Motor 0:", angle_2)
 print("Target angle of Motor 1:", angle_1)
 
-# motor_0.run_target(100, angle_2 * 5)
-# motor_1.run_target(100, angle_1 * 5)
+motor_0.run_target(100, angle_2 * 5)
+motor_1.run_target(100, angle_1 * 5)
 
 m0=angle_2 * 5
 m1=angle_1 * 5
-arm.curve(m0/(m1-m0),(m1-m0)*180/pi)
 time.sleep(6)
 motor_1.run_target(100, 0)
 motor_0.run_target(100, 450)
