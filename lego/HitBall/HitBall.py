@@ -23,6 +23,7 @@ arm = DriveBase(motor_0,motor_1,wheel_diameter=1,axle_track=1)
 cur_pos=(RECT_X,RECT_Y,180)
 
 def HitBall(x,y,longtitude,latitude):
+    global cur_pos
     t1,t2,d=decide_t1_t2(Z,latitude)
     end_point=(x+8*sin(longtitude)-d*cos(longtitude),y-8*cos(longtitude)-d*sin(longtitude),longtitude)
     t1_h,t2_h,_=decide_t1_t2(Z+26,latitude-6)
@@ -164,15 +165,18 @@ def robot_straight():
 def robot_turn():
     pass
 
-def calibrate_pos(new_pos):
+def calibrate_pos():
+    global cur_pos
+    new_pos=(0,0)
+    direct_move(new_pos)
     cur_pos=new_pos
 
 def direct_move(end):
+    global cur_pos
     vec=(end[0]-cur_pos[0],end[1]-cur_pos[1])
     theta=atan2(end[1]-cur_pos[1],end[0]-cur_pos[0])
     robot.turn(reg_angle(cur_pos[2],theta))
     robot.straight(sqrt(vec[0]**2+vec[1]**2))
     robot.turn(reg_angle(theta,end[2]))
-    cur_pos=end
 
 HitBall(100,50,225,30)
