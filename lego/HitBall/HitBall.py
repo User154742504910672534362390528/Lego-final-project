@@ -157,3 +157,22 @@ def reg_angle(start,end):
         return rotate
     else:
         return rotate_opposite
+
+def robot_straight():
+    pass
+
+def robot_turn():
+    pass
+
+def calibrate_pos(new_pos):
+    cur_pos=new_pos
+
+def direct_move(end):
+    vec=(end[0]-cur_pos[0],end[1]-cur_pos[1])
+    theta=atan2(end[1]-cur_pos[1],end[0]-cur_pos[0])
+    robot.turn(reg_angle(cur_pos[2],theta))
+    robot.straight(sqrt(vec[0]**2+vec[1]**2))
+    robot.turn(reg_angle(theta,end[2]))
+    cur_pos=end
+
+HitBall(100,50,225,30)
