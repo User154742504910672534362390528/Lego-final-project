@@ -1,12 +1,11 @@
 import cv2
 import numpy as np
 from copy import deepcopy
-from numpy.linalg import inv
 from physics import *
 
 try:
     print(1)
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
     cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
     # cap.set(cv2.CAP_PROP_SETTINGS, 1)
     print(2)
@@ -59,12 +58,16 @@ kernel = kernel|kernel.T
 '''
 while 1:
     ret, frame = cap.read()
+    print(frame.shape)
     width, height = frame.shape[:2]
+    # logi camera
     # 480, 640
+    # WXL phone
+    # 720 1080
     # print(width, height)
+    cv2.imshow("og frame", frame)
     # hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    gray = cv2.medianBlur(gray, 5)
+    frame = frame[300:470, 530:810, :]
     hsv = cv2.cvtColor(cv2.GaussianBlur(frame, (9, 9), 0), cv2.COLOR_BGR2HSV)
     # print(hsv[frame.shape[0]//2, frame.shape[1]//2])
     data = hsv[frame.shape[0]//2, frame.shape[1]//2]
@@ -88,14 +91,14 @@ while 1:
     # closed_hsv = cv2.(closed_hsv, kernel)
     all_circles = []
     # circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=15, minRadius=15, maxRadius=25)
-    circles = cv2.HoughCircles(filter_hsv, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=15, minRadius=15, maxRadius=25)
-    # circles = cv2.HoughCircles(closed_hsv, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=15, minRadius=15, maxRadius=25)
+    circles = cv2.HoughCircles(filter_hsv, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=9, minRadius=5, maxRadius=10)
+    # circles = cv2.HoughCircles(filter_hsv, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=15, minRadius=15, maxRadius=25)
     if circles is not None:
         # count -= 1
         circles = np.uint16(np.around(circles))
         all_circles.append(circles)
         for c in circles[0, :]:
-            cv2.circle(frame, (c[0], c[1]), c[2], (255, 255, 255), 1)
+            cv2.circle(frame, (c[0], c[1]), c[2], (255, 255, 255), 2)
 
     # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # blur = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -127,6 +130,7 @@ while 1:
     cv2.circle(frame, list(map(int, real_to_camera(HOLES[1])[:2])), 10, (255, 0, 0), 2)
     cv2.circle(frame, list(map(int, real_to_camera(HOLES[2])[:2])), 10, (255, 0, 0), 2)
     cv2.circle(frame, list(map(int, real_to_camera(HOLES[3])[:2])), 10, (255, 0, 0), 2)
+    cv2.circle(frame, (frame.shape[1]//2, frame.shape[0]//2), 10, (0, 0, 255), 2)
     cv2.imshow("frame", frame)
     key = cv2.waitKey(1)
     # if key == ord("q"):
@@ -206,8 +210,6 @@ cap.release()
 cv2.destroyAllWindows()
 #'''
 
-
-camera_mtx_inv=inv(CAMERA_MTX) # invesing the matrix is required (see the definition of camera matrix)
 
 def dist(p1, p2):
     return np.linalg.norm(p1 - p2)
@@ -317,24 +319,27 @@ class Tracker:
                     # print("COL", circles[col])
                     self.new_obj(circles[col][:2])
 
-def transform(center):
-    x, y = center
+def get_car_pos(cap):
+    ret, frame = cap.read()
+    
+    arucoDict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+    marker_corners, marker_ids, rej = cv2.aruco.detectMarkers(frame, arucoDict)
 
-    line_vec = camera_mtx_inv@np.array([x, y, 1])
+    if marker_ids is not None:
+        cv2.aruco.drawDetectedMarkers(frame, marker_corners, marker_ids)
+        rv, tv, _ = cv2.aruco.estimatePoseSingleMarkers(marker_corners, 35, CAMERA_MTX, np.array([0., 0., 0., 0., 0.]))
+        
+        for i in range(len(marker_ids)):
+            cv2.aruco.drawAxis(frame, CAMERA_MTX, np.array([0., 0., 0., 0., 0.]), rv[i], tv[i], 35)
+            cx = int(np.mean(marker_corners[i][0][:, 0]))
+            cy = int(np.mean(marker_corners[i][0][:, 1]))
 
-    line_vec = np.array([line_vec[1], -line_vec[0], 1])
+            print(cx, cy, i, marker_ids[i], np.degrees(rv[i]))
+    cv2.imshow("frame", frame)
+    cv2.waitKey(0)
 
-    grip_x = grip_y = 0
-    grip_z = 300
+    return
 
-    grip_pos = np.array([grip_x, grip_y, grip_x])
-
-    table_z = 0
-
-    t = (table_z-grip_z)/line_vec[2]
-
-    block_pos = grip_pos + t*line_vec
-    return block_pos
 
 def get_ball_pos(cap):
     '''
@@ -346,8 +351,11 @@ def get_ball_pos(cap):
     all_circles = []
     while count > 0:
         ret, frame = cap.read()
+        # cv2.imshow("frame", frame)
         width, height = frame.shape[:2]
-
+        frame = frame[300:470, 530:810, :]
+        cv2.imshow("frm", frame)
+        # cv2.waitKey(0)
         hsv = cv2.cvtColor(cv2.GaussianBlur(frame, (9, 9), 0), cv2.COLOR_BGR2HSV)
         data = hsv[frame.shape[0]//2, frame.shape[1]//2]
         high = np.array([data[0] + hmax, data[1] + smax, data[2] + vmax])
@@ -360,7 +368,8 @@ def get_ball_pos(cap):
 
         closed_positive = cv2.bitwise_not(closed_hsv)
 
-        circles = cv2.HoughCircles(filter_hsv, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=15, minRadius=15, maxRadius=25)
+        circles = cv2.HoughCircles(filter_hsv, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=9, minRadius=5, maxRadius=10)
+        # circles = cv2.HoughCircles(filter_hsv, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=15, minRadius=15, maxRadius=25)
         # circles = cv2.HoughCircles(closed_positive, cv2.HOUGH_GRADIENT, 1, 15, param1=30, param2=15, minRadius=15, maxRadius=25)
         if circles is not None:
             count -= 1

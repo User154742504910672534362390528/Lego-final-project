@@ -3,7 +3,7 @@ import cv2
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lego"))
 
 from const import *
-from object_recognition import get_ball_pos
+from object_recognition import get_ball_pos, get_car_pos
 from physics import *
 
 def main():
@@ -11,7 +11,7 @@ def main():
     # initialize webcam
     try:
         print("Initializing camera")
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
         cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
         if not cap.isOpened():
             print("camera off")
@@ -25,9 +25,10 @@ def main():
     print(camera_pos)
     print(balls[-1])
     ret, frame = cap.read()
+    small_frame = frame[300:470, 530:810, :]
     for center in camera_pos:
         cx, cy = map(int, center)
-        cv2.circle(frame, (cx, cy), 20, (255, 0, 0), 2)
+        cv2.circle(small_frame, (cx, cy), 8, (255, 0, 0), 2)
     
 
     final_path = plan_path(balls, HOLES)
@@ -37,9 +38,12 @@ def main():
 
     p1 = np.uint16(real_to_camera(final_ball.pos)[:2])
     p2 = np.uint16(real_to_camera(final_hole)[:2])
-    cv2.line(frame, p1, p2, (0, 255, 0), 2)
-    cv2.imshow("balls", frame)
+    cv2.line(small_frame, p1, p2, (0, 255, 0), 2)
+    cv2.imshow("balls", small_frame)
     cv2.waitKey(0)
+
+    # calibrate car
+    get_car_pos(cap)
     exit()
     # initialize socket servers
     print("Initializing sockets")

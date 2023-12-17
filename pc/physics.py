@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lego"))
 from const import *
 import numpy as np
 import os, sys
-from numpy.linalg import solve
+from numpy.linalg import solve, inv
 
 scale = 0.91
 CAMERA_MTX = np.array(
@@ -15,10 +15,43 @@ CAMERA_MTX = np.array(
         [  0.          ,0.          ,1.        ]
     ]
 )
+z_height = 600
+
+focus=485
+CAMERA_MTX = np.array(
+    [
+        [focus,0.,140.0],
+        [0.,focus,85.0],
+        [0., 0., 1.]
+    ]
+)
+
+camera_mtx_inv=inv(CAMERA_MTX) # invesing the matrix is required (see the definition of camera matrix)
+
 
 def real_to_camera(pos):
     x, y = pos
-    return CAMERA_MTX@(x/300, -y/300, 1)
+    return CAMERA_MTX@(x/z_height, -y/z_height, 1)
+
+def transform(center):
+    x, y = center
+
+    line_vec = camera_mtx_inv@np.array([x, y, 1])
+
+    line_vec = np.array([line_vec[1], -line_vec[0], 1])
+
+    grip_x = grip_y = 0
+    grip_z = z_height
+
+    grip_pos = np.array([grip_x, grip_y, grip_x])
+
+    table_z = 0
+
+    t = (table_z-grip_z)/line_vec[2]
+
+    block_pos = grip_pos + t*line_vec
+    return block_pos
+
 
 class Ball:
     def __init__(self, pos: np.array, index) -> None:
