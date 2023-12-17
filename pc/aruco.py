@@ -65,6 +65,8 @@ if marker_ids is not None:
         cx = int(np.mean(marker_corners[i][0][:, 0]))
         cy = int(np.mean(marker_corners[i][0][:, 1]))
 
+        cv2.circle(frame, (cx, cy), 15, (255, 255, 0), -1)
+
         print(cx, cy, i, marker_ids[i], np.degrees(rv[i]))
 cv2.imshow("frame", frame)
 cv2.waitKey(0)

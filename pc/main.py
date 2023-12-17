@@ -39,11 +39,16 @@ def main():
     p1 = np.uint16(real_to_camera(final_ball.pos)[:2])
     p2 = np.uint16(real_to_camera(final_hole)[:2])
     cv2.line(small_frame, p1, p2, (0, 255, 0), 2)
-    cv2.imshow("balls", small_frame)
-    cv2.waitKey(0)
+    cv2.imshow("balls", cv2.resize(small_frame, (small_frame.shape[1]*2, small_frame.shape[0]*2)))
+    # cv2.waitKey(0)
 
     # calibrate car
-    get_car_pos(cap)
+    arucos = get_car_pos(cap)
+    for a in arucos:
+
+        cv2.aruco.drawAxis(frame, CAMERA_MTX, np.array([0., 0., 0., 0., 0.]), *a)
+    cv2.imshow("frame", frame)
+    cv2.waitKey(0)
     exit()
     # initialize socket servers
     print("Initializing sockets")

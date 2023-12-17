@@ -33,7 +33,7 @@ def real_to_camera(pos):
     x, y = pos
     return CAMERA_MTX@(x/z_height, -y/z_height, 1)
 
-def transform(center):
+def transform(center, z):
     x, y = center
 
     line_vec = camera_mtx_inv@np.array([x, y, 1])
@@ -45,7 +45,7 @@ def transform(center):
 
     grip_pos = np.array([grip_x, grip_y, grip_x])
 
-    table_z = 0
+    table_z = z
 
     t = (table_z-grip_z)/line_vec[2]
 

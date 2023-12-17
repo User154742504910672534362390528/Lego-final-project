@@ -321,6 +321,10 @@ class Tracker:
 
 def get_car_pos(cap):
     ret, frame = cap.read()
+
+    aruco_height = {2:144.772, 9:152.875, 0:0}
+
+    ret_aruco = []
     
     arucoDict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     marker_corners, marker_ids, rej = cv2.aruco.detectMarkers(frame, arucoDict)
@@ -330,15 +334,20 @@ def get_car_pos(cap):
         rv, tv, _ = cv2.aruco.estimatePoseSingleMarkers(marker_corners, 35, CAMERA_MTX, np.array([0., 0., 0., 0., 0.]))
         
         for i in range(len(marker_ids)):
+            # if marker_ids[i] not in aruco_height:
+            #     continue
             cv2.aruco.drawAxis(frame, CAMERA_MTX, np.array([0., 0., 0., 0., 0.]), rv[i], tv[i], 35)
             cx = int(np.mean(marker_corners[i][0][:, 0]))
             cy = int(np.mean(marker_corners[i][0][:, 1]))
 
             print(cx, cy, i, marker_ids[i], np.degrees(rv[i]))
-    cv2.imshow("frame", frame)
-    cv2.waitKey(0)
+            # transform((cx, cy), aruco_height[marker_ids[i]])
+            # ret_aruco[marker_ids[i]] = [cx, cy]
+            ret_aruco.append([rv[i], tv[i], 35])
+    # cv2.imshow("frame", frame)
+    # cv2.waitKey(0)
 
-    return
+    return ret_aruco
 
 
 def get_ball_pos(cap):
@@ -354,7 +363,7 @@ def get_ball_pos(cap):
         # cv2.imshow("frame", frame)
         width, height = frame.shape[:2]
         frame = frame[300:470, 530:810, :]
-        cv2.imshow("frm", frame)
+        # cv2.imshow("frm", frame)
         # cv2.waitKey(0)
         hsv = cv2.cvtColor(cv2.GaussianBlur(frame, (9, 9), 0), cv2.COLOR_BGR2HSV)
         data = hsv[frame.shape[0]//2, frame.shape[1]//2]
@@ -404,7 +413,7 @@ def get_ball_pos(cap):
         array = np.array(trajectory, dtype=np.float32)
         average_center = np.sum(array, axis=0) / len(trajectory)
         centers.append(average_center)
-        balls.append(Ball(transform(average_center)[1::-1], key))
+        balls.append(Ball(transform(average_center, 0)[1::-1], key))
         # trans = transform(average_center)
         # print(average_center, trans[1::-1])
         # centers.append(trans[1::-1])

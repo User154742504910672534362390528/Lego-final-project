@@ -81,7 +81,6 @@ MID_POCKET_ANGLE = [
 # corner to corner 27
 
 TABLE = [
-    # TODO
     # p0 * x + p1 * y = p2
     [1, 0, 135],
     [0, 1, 65],
