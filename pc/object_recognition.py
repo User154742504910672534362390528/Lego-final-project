@@ -34,6 +34,15 @@ smin = 20
 smax = 31
 
 
+# CAMERA_MTX = np.array(
+#     [
+#         [650.59819165, 0.        ,317.94835167],
+#         [  0.        ,653.61004762 ,242.65273137],
+#         [  0.          ,0.          ,1.        ]
+#     ]
+# )
+
+
 
 kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (CIRCLE_RADIUS, CIRCLE_RADIUS))
 # kernel = 1-kernel
@@ -112,7 +121,12 @@ while 1:
     #     # cv2.rectangle(frame, *rect)
     #     cv2.drawContours(frame, cnt, -1, (255, 0, 0), 3)
     # print()
-    cv2.circle(frame, (frame.shape[1]//2, frame.shape[0]//2), 10, (0, 0, 255), 1)
+    # cv2.circle(frame, (frame.shape[1]//2, frame.shape[0]//2), 10, (0, 0, 255), 1)
+    cv2.circle(frame, list(map(int, real_to_camera((0, 0))[:2])), 10, (255, 0, 0), 2)
+    cv2.circle(frame, list(map(int, real_to_camera(HOLES[0])[:2])), 10, (255, 0, 0), 2)
+    cv2.circle(frame, list(map(int, real_to_camera(HOLES[1])[:2])), 10, (255, 0, 0), 2)
+    cv2.circle(frame, list(map(int, real_to_camera(HOLES[2])[:2])), 10, (255, 0, 0), 2)
+    cv2.circle(frame, list(map(int, real_to_camera(HOLES[3])[:2])), 10, (255, 0, 0), 2)
     cv2.imshow("frame", frame)
     key = cv2.waitKey(1)
     # if key == ord("q"):
@@ -193,13 +207,6 @@ cv2.destroyAllWindows()
 #'''
 
 
-CAMERA_MTX = np.array(
-    [
-        [650.59819165, 0.        ,317.94835167],
-        [  0.        ,653.61004762 ,242.65273137],
-        [  0.          ,0.          ,1.        ]
-    ]
-)
 camera_mtx_inv=inv(CAMERA_MTX) # invesing the matrix is required (see the definition of camera matrix)
 
 def dist(p1, p2):
@@ -328,6 +335,7 @@ def transform(center):
 
     block_pos = grip_pos + t*line_vec
     return block_pos
+
 def get_ball_pos(cap):
     '''
     return a list of coordinates of balls

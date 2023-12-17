@@ -7,6 +7,19 @@ import numpy as np
 import os, sys
 from numpy.linalg import solve
 
+scale = 0.91
+CAMERA_MTX = np.array(
+    [
+        [650.59819165*scale, 0.        ,320.],
+        [  0.        ,653.61004762*scale ,240.],
+        [  0.          ,0.          ,1.        ]
+    ]
+)
+
+def real_to_camera(pos):
+    x, y = pos
+    return CAMERA_MTX@(x/300, -y/300, 1)
+
 class Ball:
     def __init__(self, pos: np.array, index) -> None:
         self.index = index
@@ -111,7 +124,7 @@ def plan_path(balls: list[Ball], holes: list[list[int]]):
     You can you up!
     '''
     best_shot = []
-    best_score = -1
+    best_score = 99999999999
     for ball in balls:
         for i, hole in enumerate(holes):
             score = ball.path_clear(hole, balls)

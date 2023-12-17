@@ -32,6 +32,12 @@ def main():
 
     final_path = plan_path(balls, HOLES)
     print("final path", final_path)
+    final_ball, final_hole = final_path
+    print(final_ball.pos, final_hole)
+
+    p1 = np.uint16(real_to_camera(final_ball.pos)[:2])
+    p2 = np.uint16(real_to_camera(final_hole)[:2])
+    cv2.line(frame, p1, p2, (0, 255, 0), 2)
     cv2.imshow("balls", frame)
     cv2.waitKey(0)
     exit()
